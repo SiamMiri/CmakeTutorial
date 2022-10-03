@@ -1,40 +1,21 @@
-#include <iostream>
-#include <GLFW/glfw3.h>
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
+#include "include/backend.h"
 
-int main(){
+int main(int argc, char *argv[])
+{
+    QGuiApplication app(argc, argv);
 
-    GLFWwindow *window;
-    if( !glfwInit() )
-        {
-            fprintf( stderr, "Failed to initialize GLFW\n" );
-            exit( EXIT_FAILURE );
-        }
+    qmlRegisterType<Backend>("extren",0,1,"ExternFunc");
 
-        window = glfwCreateWindow( 300, 300, "Gears", NULL, NULL );
-        if (!window)
-        {
-            fprintf( stderr, "Failed to open GLFW window\n" );
-            glfwTerminate();
-            exit( EXIT_FAILURE );
-        }
+    QQmlApplicationEngine engine;
+    const QUrl url(u"qrc:/SecondTry/main.qml"_qs);
+    QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
+                     &app, [url](QObject *obj, const QUrl &objUrl) {
+        if (!obj && url == objUrl)
+            QCoreApplication::exit(-1);
+    }, Qt::QueuedConnection);
+    engine.load(url);
 
-        // Main loop
-        while( !glfwWindowShouldClose(window) )
-        {
-            // Draw gears
-            // draw();
-
-            // Update animation
-            // animate();
-
-            // Swap buffers
-            glfwSwapBuffers(window);
-            glfwPollEvents();
-        }
-
-        // Terminate GLFW
-        glfwTerminate();
-
-        // Exit program
-        exit( EXIT_SUCCESS );
+    return app.exec();
 }

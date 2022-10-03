@@ -1,3 +1,3 @@
 #! /bin/sh
 
-cd out/build ; ./main
+cd out/build ; ./appSecondTry
